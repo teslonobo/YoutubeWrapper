@@ -1,45 +1,50 @@
 import os 
 import yt_dlp 
 
-class YouTube_Dl():
-    def __init__(self, url):
-        self.url = url
-class YouTube_Playlist(YouTube_Dl):
-    def __init__(self,url,option,outpath):
+class YouTubeData:
+    def __init__(self):
+        data_dir = os.path.join(os.path.dirname(__file__),'_Data')
+        ops = ['Audio','Video']
+        ops_dir = [os.path.join(data_dir,o) for o in ops]
+        if not os.path.exists(data_dir):
+            os.mkdir(data_dir)
+            for o in ops_dir:
+                if not os.path.exists(o):
+                    os.mkdir(o)
+        self.d_drive = data_dir
+        self.options = ops
+        self.ops_drive = ops_dir
+
+class YouTube_DL(YouTubeData):
+    def __init__(self,url:str,option:str,link_type:bool):
+        super().__init__()
         self.option = option
-        self.outpath = outpath
-        super().__init__(url)
         self.url = url
-    def check_format(self,my_file_path,format):
-        my_file_path = self.outpath
-        if not os.path.exists(my_file_path):
-            os.mkdir(my_file_path)
-        format = self.option 
-        if format == 'audio':
+        self.link_type = link_type
+
+    def createFormatting(self) -> dict:
+        format = self.option
+        if format == 'Audio':
             ydl_opts = {
                 "format": "bestaudio[ext=m4a]",
-                "outtmpl": os.path.join(my_file_path, "%(title)s.%(ext)s"),
-                "yes-playlist": True,
+                "outtmpl": os.path.join(self.ops_drive[0], "%(title)s.%(ext)s"),
+                "yes-playlist": self.link_type,
+                'quiet': True,
             }
             return ydl_opts
-        elif format == 'video':
+        elif format == 'Video':
             ydl_opts = {
                 "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]",
-                "outtmpl": os.path.join(my_file_path, "%(title)s.%(ext)s"),
-                "yes-playlist": True,
+                "outtmpl": os.path.join(self.ops_drive[1], "%(title)s.%(ext)s"),
+                "yes-playlist": self.link_type,
+                'quiet': True,
             }
             return ydl_opts
-        elif format != 'video' and format != 'audio':
-            message = 'Must pick video, or audio '
-            return message
         
-    def download_playlist(self):
-        directory_path = self.outpath
+    def download_YTLink(self):
+
+        ydl_opts = self.createFormatting()
         url = self.url
-        format = self.option
-        ''' Download a Full Playlist '''
-        my_file_path = os.path.abspath(directory_path)
-        ydl_opts = self.check_format(my_file_path,format)
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             try:

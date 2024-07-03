@@ -1,7 +1,8 @@
-from YouTubeDL_Wrapper import YP
+from YouTubeDL_Wrapper import YouTube_DL
 
-url = 'https://www.youtube.com/playlist?list=PLcGkkXtask_fghbI0Edu-ZmsfgO8dh09I'
-option = 'audio'
-outpath = 'Resized'
-youtube_link = YP(url,option,outpath)
-youtube_link.download_playlist()
+
+url = 'https://www.youtube.com/watch?v=viAk4pUCzSs'
+url = 'https://www.youtube.com/watch?v=T6eK-2OQtew&list=RDCLAK5uy_k1VVBVsS6pu1pVkYZK2B0EWic3i4j_TY4&index=2'
+option = 'Audio'
+
+youtube_link = YouTube_DL(url,option).download_playlist()
